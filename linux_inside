@@ -1,0 +1,34 @@
+FROM BOOTLOADER TO KERNEL
+=========================
+
+moederbord stuurt een signaal naar de power supply om mee te geven hoeveel stroom het nodig heeft.
+een "power good" signaal wordt naar het moederbord gestuurd.
+De CPU wordt gestart in real mode en reset alle waarden. Real mode zorgt er voor dat het slechts 1 MB kan bereiken.
+Bij x86 zet het volgende waarden
+
+	ip			0xfff0
+	cs selector 0xf000
+	cs base		0xffff0000
+	
+de cpu gebruikt memory segmentation om aan de volledige address space te geraken
+Al het geheugen wordt verdeeld in segmenten van 64 KB.
+Een address wordt verdeeld in 2 delen: de segment selector (base address) en een offset.
+In real mode is het fysieke address = selector * 16 + offset
+bv CS:IP = 0x2000:0x0010    ==> fysiek address is 0x20010
+
+Normaal cs base = cs selector * 16, maar tijdens een reset wordt 0xffff0000 er in gestoken totdat CS verandert.
+Het start adres is dus    cs base + ip = 0xfffffff0. Dit is de reset vector.
+In deze locatie verwacht de CPU een jmp naar de BIOS.
+
+De bios is gestart. Het initialiseert en test alle hardware. Daarna zoekt het een device om van te booten.
+
+
+
+
+
+
+
+
+
+
+
