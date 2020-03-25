@@ -29,10 +29,95 @@ data
 text (code)
 reserved
 
-Voor integers heeft men signed en unsigned. Om een negative integer te bekomen gebruikt men two's complement:
+Floating point representatie gebeurt volgens IEEE 754. Het heeft drie delen: Sign, Exponent en Mantissa. Bv:
+-7.75
+sign is negatief -> 1
+-7.75 = -0111.11
+zet om naar wetenschappelijk
+-1.1111 x 2^2
+   ^^^^  = mantissa
+Neem de exponent en doe het +127
+2 + 127 = 1000 0001
+=====>>>>>>>>>>>>>>>>> 1100 0000 1111 1000 0000 0000 0000 0000
+=====>>>>>>>>>>>>>>>>> C0F80000
 
-9	=	00001001
-negate	11110110
-plus 1	11110111
--9	=	11110111	= 0xF7
+=================
+4. Program Format
+=================
+
+De assembly code moet een correct formaat hebben:
+Data section
+BSS section
+Text section
+
+Comments starten met ;
+Hexadecimals hebben prefix 0x
+octals hebben suffix q
+constanten worden gegeven door equ: SIZE equ 1000. Deze wordt vervangen door de effectieve waarde tijdens het assembly process.
+Men start de data section door "section .data". Dit is een lijst van variabelen in het volgende formaat: naam type initiele_waarde
+
+De datatypes zijn:
+db		8 bit
+dw		16 bit
+dd		32 bit
+dq		64 bit
+ddq		128 bit (integer)
+dt		128 bit (float)
+
+Arrays specifieert men komma separated: arr dd 10, 20, 40
+
+Men start de bss section door "section .bss". Ze voldoen aan het formaat: naam type lengte.
+De verschillende datatypes zijn:
+resb	8 bit
+resw	16 bit
+resd	32 bit
+resq	64 bit
+resdq	128 bit
+
+De code zelf start men door "section .text". De entry point is
+global _start
+_start:
+
+=================
+5. Tool Chain
+=================
+De toolchain is als volgt:
+1. Assembler: zet de code om van assembly naar machinetaal (object files)
+2. Linker: linkt alle objecten samen
+3. Loader: laadt de executable in het geheugen
+
+De assembler yasm: "yasm -g dwarf2 -f elf64 example.asm -l example.lst"
+-g dwarf2 : zegt dat men een bepaald soort debugging moet toevoegen
+-f elf64: zegt dat het geassembleerd moet worden volgens het formaat van 64bit linux
+-l example.lst: maak een list file aan. Deze bevat voor elke assembly lijn de vertaling en het origineel: 36 00000009 40660301          dVar1    dd  17000000
+
+De linker ld: ld -g -o example example.o
+-g: voeg debugging info toe
+-o example: output file
+
+Als men over verschillende bestanden variabelen/functies wilt gebruiken, gebruikt men "extern"
+
+=================
+5. Instruction set overview
+=================
+
+Data movement: mov dest, how_much src
+	mov eax, dword [myvar]
+
+Memory gebruiken doet men door brackets. Als men een variabele geeft zonder [], dan wordt het adres genomen.
+
+mov rax, qword [var1]		; value of var1 in rax
+mov rax, var1				; address of var1 in rax
+
+Men kan ook het adres opvragen door de load effective addres
+	lea rcx, byte [bvar]
+
+Wanneer men een widening doet (van byte naar word moven), moet men rekening houden met de bits die niet in de src zitten.
+Met movzx kan men een move doen zonder dat de vorige bits gereset moeten worden.
+
+
+
+
+
+
 
