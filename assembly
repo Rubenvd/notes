@@ -98,7 +98,7 @@ De linker ld: ld -g -o example example.o
 Als men over verschillende bestanden variabelen/functies wilt gebruiken, gebruikt men "extern"
 
 =================
-5. Instruction set overview
+7. Instruction set overview
 =================
 
 Data movement: mov dest, how_much src
@@ -114,6 +114,36 @@ Men kan ook het adres opvragen door de load effective addres
 
 Wanneer men een widening doet (van byte naar word moven), moet men rekening houden met de bits die niet in de src zitten.
 Met movzx kan men een move doen zonder dat de vorige bits gereset moeten worden.
+Voor signed is het equivalent movsx en movsxd (afhankelijk van de destination)
+
+Men heeft ook enkele operaties die specifiek van een bepaalde register een widening doen:
+cbw, cwd, cwde, cdq, cdqe, cqo
+
+Som van twee registers:
+add <dest>,<src>
+
+Men kan ook een increment van 1 doen. Als we een memory access doen, moeten we het type specifieren
+inc <operand>
+
+Als men een carry mee wilt nemen naar een addition, dan moet men adc gebruiken:
+adc <dest>,<src>     ===>  <dest> = <dest> + <src> + <carrybit>
+
+Een verschil ergens van nemen heeft equivalente operaties: sub en dec
+
+Multiplication is ietwat complexer, aangezien er een deel van in een ander register gestoken moet worden.
+Als men bijvoorbeeld twee getallen van 8 bit vermenigvuldigt, kan men een 16-bit getal krijgen.
+Men steekt dus eerst een waarde in de A register. Vervolgens doet men "mul <operand>". De oplossing zit dan
+uiteindelijk gedeeltelijk in de A, gedeeltelijk in D.
+
+
+
+
+
+
+
+
+
+
 
 
 
